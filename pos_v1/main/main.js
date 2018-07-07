@@ -1,5 +1,6 @@
 'use strict';
 
+const {loadAllItems,loadPromotions} = require('../spec/fixtures');
 function printReceipt(buyGoodsList) {
   let allGoodItemArray = loadAllItems();
   let promotion = loadPromotions();
@@ -8,11 +9,21 @@ function printReceipt(buyGoodsList) {
   let noDiscountTotalPrice = getReceiptPreSum(recieptArray);
   recieptArray = getReceiptInfo(recieptArray, promotion);
   let discountTotalPrice = getReceiptPoSum(recieptArray);
+  // let discountTotalPrice = posum;
   let totalPrice = noDiscountTotalPrice - discountTotalPrice;
   let receiptPrint = generateReciept(recieptArray, discountTotalPrice, totalPrice);
 
   console.log(receiptPrint);
 
+}
+
+//获取商品优惠总价
+const getReceiptPoSum = (buyGoodsList)=>{
+  let sum = 0.00;
+  for (let buyGoodObject of buyGoodsList) {
+    sum += buyGoodObject.sum;
+  }
+  return sum;
 }
 
 //获取商品数量
@@ -54,17 +65,17 @@ function buildReceiptArray(allGoodItems, codeAndNumObject) {
   return receiptArray;
 }
 
-function getReceiptPreSum(receiptArray) {
+const getReceiptPreSum = (receiptArray)=> {
   let sum = 0.00;
-  for (let i = 0; i < receiptArray.length; i++) {
-    sum += receiptArray[i].price * receiptArray[i].num;
+  for (let recieptObject of receiptArray) {
+    sum += recieptObject.price * recieptObject.num;
   }
   return sum;
 }
 
 
 //查找对应商品信息
-function getReceiptInfo(receiptArray, promotion) {
+const getReceiptInfo = (receiptArray, promotion) => {
   for(let promotionObject of promotion) {
     let sum = 0.00;
     for (let i = 0; i < receiptArray.length; i++) {
@@ -88,14 +99,7 @@ function getReceiptInfo(receiptArray, promotion) {
   return receiptArray;
 }
 
-//获取商品优惠总价
-function getReceiptPoSum(buyGoodsList) {
-  let sum = 0.00;
-  for (let i = 0; i < buyGoodsList.length; i++) {
-    sum += buyGoodsList[i].sum;
-  }
-  return sum;
-}
+
 
 //组装打印数据
 /**
@@ -119,3 +123,5 @@ function generateReciept(recieptArray, discountTotalPrice, totalPrice) {
     '**********************'
   return receiptPrint;
 }
+
+module.exports ={printReceipt,buildCodeAndNumArray,buildReceiptArray,getReceiptPreSum,getReceiptInfo,generateReciept} ;
