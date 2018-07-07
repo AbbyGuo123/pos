@@ -82,8 +82,8 @@ const getReceiptInfo = (receiptArray, promotion) => {
       let gitNum = recieptObject.num;
       let hasCodeflag = false;
       let barcodes = promotionObject.barcodes;
-      for (let j = 0; j < barcodes.length&&!hasCodeflag; j++) {
-        if (promotionObject.barcodes[j] === recieptObject.code) {
+      for (let barcode of barcodes) {
+        if (barcode === recieptObject.code) {
           hasCodeflag = true;
           break;
         }
