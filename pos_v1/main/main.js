@@ -78,20 +78,20 @@ const getReceiptPreSum = (receiptArray)=> {
 const getReceiptInfo = (receiptArray, promotion) => {
   for(let promotionObject of promotion) {
     let sum = 0.00;
-    for (let i = 0; i < receiptArray.length; i++) {
-      let gitNum = receiptArray[i].num;
+    for (let recieptObject of receiptArray) {
+      let gitNum = recieptObject.num;
       let hasCodeflag = false;
       let barcodes = promotionObject.barcodes;
       for (let j = 0; j < barcodes.length&&!hasCodeflag; j++) {
-        if (promotionObject.barcodes[j] === receiptArray[i].code) {
+        if (promotionObject.barcodes[j] === recieptObject.code) {
           hasCodeflag = true;
           break;
         }
       }
       if (hasCodeflag) {
-        gitNum = receiptArray[i].num-1;
+        gitNum = recieptObject.num-1;
       }
-      receiptArray[i].sum = receiptArray[i].price * gitNum;
+      recieptObject.sum = recieptObject.price * gitNum;
     }
   }
   console.log(":");
@@ -109,11 +109,11 @@ const getReceiptInfo = (receiptArray, promotion) => {
  * @param totalPrice
  * @returns {string|*}
  */
-function generateReciept(recieptArray, discountTotalPrice, totalPrice) {
+const generateReciept = (recieptArray, discountTotalPrice, totalPrice) => {
   let receiptPrint,content='';
-  for (let i = 0; i < recieptArray.length; i++) {
-    content += '名称：' + recieptArray[i].name + '，数量：' + recieptArray[i].num + recieptArray[i].unit + '，单价：' +
-      recieptArray[i].price.toFixed(2) + '(元)，小计：' + recieptArray[i].sum.toFixed(2) + '(元)\n'
+  for (let receiptObject of recieptArray) {
+    content += '名称：' + receiptObject.name + '，数量：' + receiptObject.num + receiptObject.unit + '，单价：' +
+    receiptObject.price.toFixed(2) + '(元)，小计：' + receiptObject.sum.toFixed(2) + '(元)\n'
   }
   receiptPrint ='***<没钱赚商店>收据***\n' +
     content +
