@@ -6,11 +6,9 @@ function printReceipt(buyGoodsList) {
   let promotion = loadPromotions();
   let codeAndNumArray = buildCodeAndNumArray(buyGoodsList);
   let recieptArray = buildReceiptArray(allGoodItemArray, codeAndNumArray);
-  let noDiscountTotalPrice = getTotalSum(recieptArray,'noDiscount');
   recieptArray = getReceiptInfo(recieptArray, promotion);
-  let discountTotalPrice = getTotalSum(recieptArray,'discount');
-  let totalPrice = noDiscountTotalPrice - discountTotalPrice;
-  let receiptPrint = generateReciept(recieptArray, discountTotalPrice, totalPrice);
+  let totalPrice = getTotalSum(recieptArray,'noDiscount')- getTotalSum(recieptArray,'discount');
+  let receiptPrint = generateReciept(recieptArray, getTotalSum(recieptArray,'discount'), totalPrice);
 
   console.log(receiptPrint);
 
@@ -89,8 +87,6 @@ const getReceiptInfo = (receiptArray, promotion) => {
       recieptObject.sum = recieptObject.price * gitNum;
     }
   }
-  console.log(":");
-  console.info(receiptArray);
   return receiptArray;
 }
 
