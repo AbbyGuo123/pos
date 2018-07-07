@@ -13,7 +13,11 @@ function printReceipt(buyGoodsList) {
   console.log(receiptPrint);
 
 }
-
+/**
+ * 根据不同类型获取总价
+ * @param recieptArray
+ * @param type （discount、nodiscount）
+ */
 const getTotalSum =  (receiptArray,type)=> {
   let sum = 0.00;
   for (let recieptObject of receiptArray) {
@@ -27,30 +31,7 @@ const getTotalSum =  (receiptArray,type)=> {
 }
 
 
-//获取商品数量
-const buildCodeAndNumArray = (buyGoodsList) => {
-  let codeAndNumArray = [];
-  for(let buyGood of buyGoodsList){
-    let codeAndNumObject = {code: buyGood, num: 1.00};
-    let hasCodeFlag = false;
-    if (buyGood.indexOf('-') !== -1) {
-      let codeSplit = buyGood.split('-');
-      codeAndNumObject.code = codeSplit[0];
-      codeAndNumObject.num = parseFloat(codeSplit[1]);
-    }
-    for (let codeAndNum of codeAndNumArray) {
-      if (codeAndNum.code === codeAndNumObject.code) {
-        hasCodeFlag = true;
-        codeAndNum.num += codeAndNumObject.num;
-        break;
-      }
-    }
-    if (!hasCodeFlag) {
-      codeAndNumArray.push(codeAndNumObject);
-    }
-  }
-  return codeAndNumArray;
-}
+
 
 //获得各商品信息
 const buildReceiptArray = (allGoodItems, codeAndNumArray)=> {
@@ -75,24 +56,50 @@ const getReceiptInfo = (receiptArray, promotion) => {
     for (let recieptObject of receiptArray) {
       let gitNum = recieptObject.num;
       let hasCodeflag = false;
-      for (let barcode of promotionObject.barcodes) {
-        if (barcode === recieptObject.code) {
-          hasCodeflag = true;
-          break;
-        }
-      }
-      if (hasCodeflag) {
-        gitNum = recieptObject.num-1;
+      let index = isObjectInArray(recieptObject,promotionObject.barcodes)
+      if (index!=-1) {
+        gitNum = recieptObject.num-Math.floor(recieptObject.num/3);
       }
       recieptObject.sum = recieptObject.price * gitNum;
     }
   }
   return receiptArray;
 }
+//获取商品数量
+const buildCodeAndNumArray = (buyGoodsList) => {
+  let codeAndNumArray = [];
+  for(let buyGood of buyGoodsList){
+    let codeAndNumObject = {code: buyGood, num: 1.00};
+    let hasCodeFlag = false;
+    if (buyGood.indexOf('-') !== -1) {
+      let codeSplit = buyGood.split('-');
+      codeAndNumObject.code = codeSplit[0];
+      codeAndNumObject.num = parseFloat(codeSplit[1]);
+    }
+    let index = isObjectInArray(codeAndNumObject,codeAndNumArray);
+    if (index==-1) {
+      codeAndNumArray.push(codeAndNumObject);
+    }else{
+      codeAndNumArray[index].num += codeAndNumObject.num;
+    }
+  }
+  return codeAndNumArray;
+}
+
+//判断该对象的code是否在array里
+const isObjectInArray = (object,array)=>{
+  let index = -1;
+  for (let i=0;i<array.length;i++) {
+    let code = array[i].code!==undefined?array[i].code:array[i];
+    if ( object.code === code) {
+      index = i;
+      break;
+    }
+  }
+  return index;
+}
 
 
-
-//组装打印数据
 /**
  * 组装打印数据
  * @param recieptArray
