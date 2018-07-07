@@ -52,19 +52,22 @@ function buildCodeAndNumArray(buyGoodsList) {
 }
 
 //获得各商品信息
-function buildReceiptArray(allGoodItems, codeAndNumObject) {
+function buildReceiptArray(allGoodItems, codeAndNumArray) {
   let receiptArray = [];
-  for (let i = 0; i < allGoodItems.length; i++) {
-    for (let j = 0; j < codeAndNumObject.length; j++) {
-      if (allGoodItems[i].barcode !== codeAndNumObject[j].code) continue;
-      const {name, unit, price} = allGoodItems[i];
-      const {code, num} = codeAndNumObject[j];
+  for (let goodItem of allGoodItems) {
+    for (let codeAndNumObject of  codeAndNumArray) {
+      if (goodItem.barcode !== codeAndNumObject.code) continue;
+      const {name, unit, price} = goodItem;
+      const {code, num} = codeAndNumObject;
       receiptArray.push({code, name, unit, price, num})
     }
   }
   return receiptArray;
 }
-
+/**
+ * 計算商品原價
+ * @param receiptArray 
+ */
 const getReceiptPreSum = (receiptArray)=> {
   let sum = 0.00;
   for (let recieptObject of receiptArray) {
