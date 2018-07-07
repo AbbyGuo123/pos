@@ -6,10 +6,9 @@ function printReceipt(buyGoodsList) {
   let promotion = loadPromotions();
   let codeAndNumArray = buildCodeAndNumArray(buyGoodsList);
   let recieptArray = buildReceiptArray(allGoodItemArray, codeAndNumArray);
-  let noDiscountTotalPrice = getReceiptPreSum(recieptArray);
+  let noDiscountTotalPrice = getTotalSum(recieptArray,'noDiscount');
   recieptArray = getReceiptInfo(recieptArray, promotion);
-  let discountTotalPrice = getReceiptPoSum(recieptArray);
-  // let discountTotalPrice = posum;
+  let discountTotalPrice = getTotalSum(recieptArray,'discount');
   let totalPrice = noDiscountTotalPrice - discountTotalPrice;
   let receiptPrint = generateReciept(recieptArray, discountTotalPrice, totalPrice);
 
@@ -17,17 +16,21 @@ function printReceipt(buyGoodsList) {
 
 }
 
-//获取商品优惠总价
-const getReceiptPoSum = (buyGoodsList)=>{
+const getTotalSum =  (receiptArray,type)=> {
   let sum = 0.00;
-  for (let buyGoodObject of buyGoodsList) {
-    sum += buyGoodObject.sum;
+  for (let recieptObject of receiptArray) {
+    if(type==='discount')
+    sum += recieptObject.sum;
+    else
+    sum += recieptObject.price * recieptObject.num;
+    
   }
   return sum;
 }
 
+
 //获取商品数量
-function buildCodeAndNumArray(buyGoodsList) {
+const buildCodeAndNumArray = (buyGoodsList) => {
   let codeAndNumArray = [];
   for(let buyGood of buyGoodsList){
     let codeAndNumObject = {code: buyGood, num: 1.00};
@@ -37,10 +40,10 @@ function buildCodeAndNumArray(buyGoodsList) {
       codeAndNumObject.code = codeSplit[0];
       codeAndNumObject.num = parseFloat(codeSplit[1]);
     }
-    for (let j = 0; j < codeAndNumArray.length; j++) {
-      if (codeAndNumArray[j].code === codeAndNumObject.code) {
+    for (let codeAndNum of codeAndNumArray) {
+      if (codeAndNum.code === codeAndNumObject.code) {
         hasCodeFlag = true;
-        codeAndNumArray[j].num += codeAndNumObject.num;
+        codeAndNum.num += codeAndNumObject.num;
         break;
       }
     }
@@ -52,7 +55,7 @@ function buildCodeAndNumArray(buyGoodsList) {
 }
 
 //获得各商品信息
-function buildReceiptArray(allGoodItems, codeAndNumArray) {
+const buildReceiptArray = (allGoodItems, codeAndNumArray)=> {
   let receiptArray = [];
   for (let goodItem of allGoodItems) {
     for (let codeAndNumObject of  codeAndNumArray) {
@@ -64,17 +67,7 @@ function buildReceiptArray(allGoodItems, codeAndNumArray) {
   }
   return receiptArray;
 }
-/**
- * 計算商品原價
- * @param receiptArray 
- */
-const getReceiptPreSum = (receiptArray)=> {
-  let sum = 0.00;
-  for (let recieptObject of receiptArray) {
-    sum += recieptObject.price * recieptObject.num;
-  }
-  return sum;
-}
+
 
 
 //查找对应商品信息
@@ -84,8 +77,7 @@ const getReceiptInfo = (receiptArray, promotion) => {
     for (let recieptObject of receiptArray) {
       let gitNum = recieptObject.num;
       let hasCodeflag = false;
-      let barcodes = promotionObject.barcodes;
-      for (let barcode of barcodes) {
+      for (let barcode of promotionObject.barcodes) {
         if (barcode === recieptObject.code) {
           hasCodeflag = true;
           break;
@@ -118,13 +110,9 @@ const generateReciept = (recieptArray, discountTotalPrice, totalPrice) => {
     content += '名称：' + receiptObject.name + '，数量：' + receiptObject.num + receiptObject.unit + '，单价：' +
     receiptObject.price.toFixed(2) + '(元)，小计：' + receiptObject.sum.toFixed(2) + '(元)\n'
   }
-  receiptPrint ='***<没钱赚商店>收据***\n' +
-    content +
-    '----------------------\n' +
-    '总计：' + discountTotalPrice.toFixed(2) + '(元)\n' +
-    '节省：' + totalPrice.toFixed(2) + '(元)\n' +
-    '**********************'
+  receiptPrint ='***<没钱赚商店>收据***\n' + content +'----------------------\n' +'总计：' + 
+  discountTotalPrice.toFixed(2) + '(元)\n' +'节省：' + totalPrice.toFixed(2) + '(元)\n' +'**********************'
   return receiptPrint;
 }
 
-module.exports ={printReceipt,buildCodeAndNumArray,buildReceiptArray,getReceiptPreSum,getReceiptInfo,generateReciept} ;
+module.exports ={printReceipt,buildCodeAndNumArray,buildReceiptArray,getReceiptInfo,generateReciept} ;

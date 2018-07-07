@@ -1,5 +1,5 @@
 'use strict';
-const {printReceipt,buildCodeAndNumArray,buildReceiptArray,getReceiptPreSum,getReceiptInfo,generateReciept} = require('../main/main');
+const {printReceipt,buildCodeAndNumArray,buildReceiptArray,getReceiptInfo,generateReciept} = require('../main/main');
 
 describe('pos', () => {
 
@@ -121,23 +121,6 @@ describe('buildReceiptArray check', () => {
 });
 
 
-describe('getReceiptPreSum check', () => {
-
-  it('check return noDiscountTotalPriceCheck', () => {
-
-    const noDiscountTotalPriceCheck = 66;
-
-    const recieptArray = [
-      {barcode: 'ITEM000001', name: '雪碧', unit: '瓶', price: 3, num: 5},
-      {barcode: 'ITEM000003', name: '荔枝', unit: '斤', price: 15, num: 2.5},
-      {barcode: 'ITEM000005', name: '方便面', unit: '袋', price: 4.5, num: 3}];
-
-
-    let noDiscountTotalPrice = getReceiptPreSum(recieptArray);
-    expect(noDiscountTotalPrice).toBe(noDiscountTotalPriceCheck);
-  });
-});
-
 
 describe('getReceiptInfo check', () => {
 
@@ -168,24 +151,6 @@ describe('getReceiptInfo check', () => {
     expect(recieptArrayToJson).toBe(JSON.stringify(recieptArrayCheck));
   });
 });
-
-
-// describe('getReceiptPoSum check', () => {
-
-//   it('check return discountTotalPrice', () => {
-
-//     const discountTotalPriceCheck = 58.5;
-
-//     const recieptArray = [
-//       {barcode: 'ITEM000001', name: '雪碧', unit: '瓶', price: 3, num: 5, sum: 12},
-//       {barcode: 'ITEM000003', name: '荔枝', unit: '斤', price: 15, num: 2.5, sum: 37.5},
-//       {barcode: 'ITEM000005', name: '方便面', unit: '袋', price: 4.5, num: 3, sum: 9}];
-
-
-//     let discountTotalPrice = getReceiptPoSum(recieptArray);
-//     expect(discountTotalPrice).toBe(discountTotalPriceCheck);
-//   });
-// });
 
 
 describe('generateReciept', () => {
